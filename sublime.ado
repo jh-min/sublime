@@ -1,9 +1,9 @@
-*** version 1.0 10Dec2019
+*** version 1.1 13Dec2019
 *** contact information: plus1@sogang.ac.kr
 
 program sublime
 	version 10
-	syntax [, Installed Portable]
+	syntax [, Installed Portable KEEPwhereis Manually]
 
 qui {
 
@@ -17,36 +17,44 @@ qui {
 	local current "`c(pwd)'"
 
 *** move to Sublime Text
-	capture macro drop _sldir
-	if "`installed'"!="" & "`portable'"!="" {
-	* users should not specify both options
-		di as error "options installed and portable may not be combined"
-		exit 184
-	}
-	else if "`installed'"!="" {
-	* installed: on
-		noisily sublime_installed
-	}
-	else if "`portable'"!="" {
-	* portable: on
-		noisily sublime_portable
+	if "`manually'"!="" {
+	* manually: on
+		noisily mata: printf("{cmd}sublime.ado{text} will create {cmd}StataEditor.sublime-settings{text} file in your working directory...\n")
+		noisily mata: printf("{text}Move this file to Packages/User directory of {cmd}Sublime Text\n")
 	}
 	else {
-	* options: off
-		capture sublime_installed
-		if _rc!=0 {
-		* Sublime Text seems not to be installed
+	* manually: off
+		capture macro drop _sldir
+		if "`installed'"!="" & "`portable'"!="" {
+		* users should not specify both options
+			di as error "options installed and portable may not be combined"
+			exit 184
+		}
+		else if "`installed'"!="" {
+		* installed: on
+			noisily sublime_installed
+		}
+		else if "`portable'"!="" {
+		* portable: on
+			global keepwhereis "`keepwhereis'"
 			noisily sublime_portable
 		}
+		else {
+		* options: off
+			capture sublime_installed
+			if _rc!=0 {
+			* Sublime Text seems not to be installed
+				global keepwhereis "`keepwhereis'"
+				noisily sublime_portable
+			}
+		}
+		capture macro drop keepwhereis
 	}
 
 *** get Stata info
 	capture macro drop _statabit _statafl _stataver _fws_dir
 	if `c(bit)'==64 {
 		local statabit "-`c(bit)'"
-	}
-	else {
-		local statabit ""
 	}
 	if `c(MP)'==1 {
 		local statafl "StataMP"
@@ -137,10 +145,12 @@ qui {
 		capture which whereis
 		if _rc!=0 {
 			noisily mata: printf("{cmd:whereis.ado}{error} is not installed\n")
+			capture macro drop keepwhereis
 			exit 199
 		}
 		else {
 			noisily mata: printf("{error}location of {cmd}Sublime Text{error} has not been stored with {cmd:whereis.ado}\n")
+			capture macro drop keepwhereis
 			exit 601
 		}
 	}
@@ -150,10 +160,18 @@ qui {
 	capture cd "`sldir'/Data/Packages/User"
 	if _rc!=0 {
 	* whereis command might have stored the directory of non-portable version
-		sublime_whereis
 		noisily mata: printf("{cmd}whereis.ado{error} seems to store the path to installed version of Sublime Text\n")
-		noisily mata: printf("{cmd}sublime.ado{error} automatically removed the directory of Sublime Text stored with {cmd}whereis.ado\n")
-		noisily mata: printf("{text}Please re-execute {cmd}sublime.ado\n")
+		if "$keepwhereis"!="" {
+		* keepwhereis: on
+			noisily mata: printf("{error}Please check the directory stored with {cmd}whereis.ado\n")
+		}
+		else {
+		* keepwhereis: off
+			sublime_whereis
+			noisily mata: printf("{cmd}sublime.ado{error} automatically removed the directory of Sublime Text stored with {cmd}whereis.ado\n")
+			noisily mata: printf("{text}Please re-execute {cmd}sublime.ado\n")
+		}
+		capture macro drop keepwhereis
 		exit 601
 	}
 
