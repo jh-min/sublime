@@ -1,0 +1,10 @@
+v 3
+
+d sublime
+d Program to set up StataEditor (a package of Sublime Text) automatically
+d Distribution-Date: 13 December 2019
+d
+d plus1@sogang.ac.kr
+
+f sublime.ado
+f sublime.sthlp
