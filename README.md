@@ -12,10 +12,15 @@ What does `sublime` do for you in detail? `sublime` automatically detects the ve
 
 ## Installation
 
-You can install `sublime` using either Stata’s `net install` command or user-written package [github][5].
+You can install the latest version of `sublime` using either Stata’s `net install` command or user-written package [github][5].
 ```
 net from https://raw.githubusercontent.com/jh-min/sublime/master
 github install jh-min/sublime
+```
+
+Current version of `sublime` is also available on SSC archive.
+```
+ssc install sublime , replace
 ```
 
 [5]: <https://github.com/haghish/github>
