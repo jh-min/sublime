@@ -34,16 +34,16 @@ sublime [, options]
 
 otpions | Description
 ---|:---
-***i****nstalled* | set `StataEditor` assuming Sublime Text is installed on user’s system
-***p****ortable* | set `StataEditor` assuming the path to portable version of Sublime Text is stored with `whereis`
+***i****nstalled* | set `StataEditor` assuming Sublime Text has been installed on user’s system
+***p****ortable* | set `StataEditor` assuming the path to portable version of Sublime Text has been stored with `whereis`
 ***keep****whereis* | force `sublime` not to remove the entry named `Sublime` from `whereis`
 ***m****anually* | write the settings file for `StataEditor` in current working directory
 
-By default, `sublime` will locate the directory of Sublime Text assuming that Sublime Text is installed on your system. If `sublime` fails to locate the directory of installed version, it will use the path stored with SSC package [whereis][4] assuming that you are using portable version of Sublime Text. Then `sublime` will write the settings file for `StataEditor` in that directory.
+By default, `sublime` will assume that you are using portable version of Sublime Text and locate the directory of Sublime Text by retrieving the path stored with SSC package [whereis][4]. If `sublime` fails to locate the directory of portable version, it will assume that Sublime Text has been installed on your system and depend on environment variable to locate the directory. Then `sublime` will write the settings file for `StataEditor` in that directory.
 
-If `installed` is specified, `sublime` will not depend on `whereis` even if it fails to locate the installed version of Sublime Text.
+If `installed` is specified, `sublime` will not depend on `whereis` even if you have stored the path to Sublime Text with `whereis`.
 
-If `portable` is specified, `sublime` will depend on `whereis` even if Sublime Text is installed on your system. To specify this option, you should first install `whereis` from SSC archive and then create an entry named `Sublime` to store the location of portable version as follows:
+If `portable` is specified, `sublime` will not locate the directory of installed version even if you have installed Sublime Text on your system. To specify this option, you should first install `whereis` from SSC archive and then create an entry named `Sublime` to store the location of portable version as follows:
 ```s
 whereis Sublime "path/to/portable version/sublime_text.exe"
 ```

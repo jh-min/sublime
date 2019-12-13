@@ -1,4 +1,4 @@
-*** version 1.1 13Dec2019
+*** version 1.2 13Dec2019
 *** contact information: plus1@sogang.ac.kr
 
 program sublime
@@ -19,8 +19,8 @@ qui {
 *** move to Sublime Text
 	if "`manually'"!="" {
 	* manually: on
-		noisily mata: printf("{cmd}sublime.ado{text} will create {cmd}StataEditor.sublime-settings{text} file in your working directory...\n")
-		noisily mata: printf("{text}Move this file to Packages/User directory of {cmd}Sublime Text\n")
+		noisily mata: printf("{cmd}sublime.ado{text} will create {result}StataEditor.sublime-settings{text} file in your working directory...\n")
+		noisily mata: printf("{text}Move this file to {result}Packages/User{text} directory of {result}Sublime Text\n")
 	}
 	else {
 	* manually: off
@@ -41,11 +41,10 @@ qui {
 		}
 		else {
 		* options: off
-			capture sublime_installed
+			global keepwhereis "`keepwhereis'"
+			capture noisily: sublime_portable
 			if _rc!=0 {
-			* Sublime Text seems not to be installed
-				global keepwhereis "`keepwhereis'"
-				noisily sublime_portable
+				noisily sublime_installed
 			}
 		}
 		capture macro drop keepwhereis
@@ -94,6 +93,7 @@ qui {
 	shell `statafl'`statabit' /Regserver
 
 *** reset cd
+	noisily mata: printf("{cmd}sublime.ado{text} successfully set up {cmd}StataEditor\n")
 	cd "`current'"
 
 }
@@ -105,6 +105,7 @@ program sublime_installed
 
 qui {
 
+	noisily mata: printf("{cmd}sublime.ado{text} will assume that {result}Sublime Text{text} has been {result}installed{text} on your system...\n")
 *** depend on environment variable %APPDATA%
 	local sldir : environ APPDATA
 	local sldir=subinstr("`sldir'", "\", "/", .)
@@ -122,9 +123,9 @@ qui {
 		capture cd "`sldir'/AppData/Roaming/Sublime Text 3/Packages/User"
 		if _rc!=0 {
 		* Sublime Text seems not to be installed
-			noisily mata: printf("{cmd}Sublime Text{error} could not be found on your system\n")
-			noisily mata: printf("{text}If you are using {result}portable version{text} of {cmd}Sublime Text{text},\n")
-			noisily mata: printf("{text}please save the directory of {cmd}Sublime Text{text} with ssc package {cmd}whereis{text} as follows:\n")
+			noisily mata: printf("{result}Sublime Text{error} could not be found on your system\n")
+			noisily mata: printf("{text}If you are using {result}portable version{text} of {result}Sublime Text{text},\n")
+			noisily mata: printf("{text}please store the directory of {result}Sublime Text{text} with ssc package {cmd}whereis{text} as follows:\n")
 			noisily mata: printf(`"{result}. whereis Sublime "path/to/Sublime Text/sublime_text.exe"\n"')
 			exit 601
 		}
@@ -139,6 +140,7 @@ program sublime_portable
 
 qui {
 
+	noisily mata: printf("{cmd}sublime.ado{text} will assume that you are using {result}portable version{text} of {result}Sublime Text{text}...\n")
 *** depend on whereis command
 	capture whereis Sublime
 	if _rc!=0 {
@@ -149,7 +151,7 @@ qui {
 			exit 199
 		}
 		else {
-			noisily mata: printf("{error}location of {cmd}Sublime Text{error} has not been stored with {cmd:whereis.ado}\n")
+			noisily mata: printf("{error}location of {result}Sublime Text{error} has not been stored with {cmd:whereis.ado}\n")
 			capture macro drop keepwhereis
 			exit 601
 		}
@@ -160,7 +162,7 @@ qui {
 	capture cd "`sldir'/Data/Packages/User"
 	if _rc!=0 {
 	* whereis command might have stored the directory of non-portable version
-		noisily mata: printf("{cmd}whereis.ado{error} seems to store the path to installed version of Sublime Text\n")
+		noisily mata: printf("{cmd}whereis.ado{error} seems to store the path to {result}installed version{error} of {result}Sublime Text\n")
 		if "$keepwhereis"!="" {
 		* keepwhereis: on
 			noisily mata: printf("{error}Please check the directory stored with {cmd}whereis.ado\n")
@@ -168,8 +170,7 @@ qui {
 		else {
 		* keepwhereis: off
 			sublime_whereis
-			noisily mata: printf("{cmd}sublime.ado{error} automatically removed the directory of Sublime Text stored with {cmd}whereis.ado\n")
-			noisily mata: printf("{text}Please re-execute {cmd}sublime.ado\n")
+			noisily mata: printf("{cmd}sublime.ado{error} automatically removed the directory of {result}Sublime Text{error} stored with {cmd}whereis.ado\n")
 		}
 		capture macro drop keepwhereis
 		exit 601
