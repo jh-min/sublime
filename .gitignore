@@ -1,0 +1,14 @@
+# previous versions
+history/
+
+# for other purposes
+*.zip
+
+# Eclipse Metadata
+.metadata/
+
+# Mac OS X clutter
+*.DS_Store
+
+# Windows clutter
+Thumbs.db
